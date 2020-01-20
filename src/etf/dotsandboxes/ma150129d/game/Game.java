@@ -6,12 +6,18 @@ import javafx.event.ActionEvent;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import javafx.event.EventHandler;
 
+import java.io.Console;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class  Game extends Application {
@@ -39,7 +45,7 @@ public class  Game extends Application {
     private static final int GROUP_GAME_BOARD_WIDTH = WINDOW_WIDTH;
     private static final int GROUP_GAME_BOARD_HEIGHT = WINDOW_HEIGHT - GROUP_HEADER_HEIGHT - GROUP_IN_GAME_PARAMS_HEIGHT + DEFAULT_SPACING / 2;
 
-    private static final Map<String, Integer> colors = new HashMap<String, Integer>(){{
+    private static final Map<String, Integer> pla = new HashMap<String, Integer>(){{
         put("Human", 0);
         put("Computer - easy", 1);
         put("Computer - medium", 2);
@@ -47,6 +53,10 @@ public class  Game extends Application {
     }};
 
     private Stage stage;
+
+    private Group groupHeader;
+    private Group groupInGameParams;
+    private Group groupGameBoard;
 
     private ComboBox<String> playerOne;
     private ComboBox<String> playerTwo;
@@ -56,15 +66,70 @@ public class  Game extends Application {
     private Spinner<Integer> numColsSpinner;
 
     private Settings settings;
+    private List<Circle> circles = new ArrayList<>();
+    private List<Rectangle> rectangles = new ArrayList<>();
+    private List<Rectangle> squares = new ArrayList<>();
+
+    private void fillGameBoard(int m, int n) {
+        int radius = 10;
+        groupGameBoard.getChildren().removeAll(circles);
+        groupGameBoard.getChildren().removeAll(rectangles);
+        groupGameBoard.getChildren().removeAll(squares);
+        circles.clear();
+        int xpos, ypos = DEFAULT_SPACING + radius;
+        for (int i = 0; i < m; i++) {
+            xpos = DEFAULT_SPACING + radius;
+            for (int j = 0; j < n; j++) {
+                if (i < m - 1 && j < n - 1) {
+                    Rectangle square = new Rectangle(xpos, ypos, 5 * radius, 5 * radius);
+                    square.setFill(Color.TRANSPARENT);
+                    squares.add(square);
+                }
+                if (j < n - 1) {
+                    Rectangle rectangle = new Rectangle(xpos, ypos - radius, 5*radius, 2*radius);
+                    rectangle.setFill(Color.TRANSPARENT);
+                    rectangle.setOnMouseClicked(new EventHandler<MouseEvent>()
+                    {
+                        @Override
+                        public void handle(MouseEvent t) {
+                            rectangle.setFill(Color.RED);
+                        }
+                    });
+                    rectangles.add(rectangle);
+                }
+                if (i < m - 1) {
+                    Rectangle rectangle = new Rectangle(xpos - radius, ypos, 2 * radius, 5 * radius);
+                    rectangle.setFill(Color.TRANSPARENT);
+                    rectangle.setOnMouseClicked(new EventHandler<MouseEvent>()
+                    {
+                        @Override
+                        public void handle(MouseEvent t) {
+                            rectangle.setFill(Color.BLUE);
+                        }
+                    });
+                    rectangles.add(rectangle);
+                }
+                Circle circle = new Circle(xpos, ypos, radius);
+                circle.setFill(Color.GRAY);
+                circles.add(circle);
+                xpos += 5*radius;
+            }
+            ypos += 5*radius;
+        }
+        groupGameBoard.getChildren().addAll(squares);
+        groupGameBoard.getChildren().addAll(rectangles);
+        groupGameBoard.getChildren().addAll(circles);
+    }
 
     private void initialize() {
-        settings = null;
-
+        groupHeader.setDisable(false);
+        groupInGameParams.setDisable(true);
+        groupGameBoard.setDisable(true);
     }
 
     @Override
     public void start(Stage primaryStage) throws Exception{
-        Group groupHeader = new Group();
+        groupHeader = new Group();
         {
             groupHeader.setTranslateX(DEFAULT_SPACING / 2);
 
@@ -88,6 +153,7 @@ public class  Game extends Application {
                 );
                 playerOne.setPromptText("Choose player 1 (red)");
                 playerOne.valueProperty().addListener((ov, t, t1) -> {
+                    settings.setPlayerOne(pla.get(t1));
                 });
             }
 
@@ -107,6 +173,7 @@ public class  Game extends Application {
                 );
                 playerTwo.setPromptText("Choose player 2 (blue)");
                 playerTwo.valueProperty().addListener((ov, t, t1) -> {
+                    settings.setPlayerTwo(pla.get(t1));
                 });
             }
 
@@ -124,7 +191,9 @@ public class  Game extends Application {
                 treeDepthSpinner.setTranslateY(5 * DEFAULT_SPACING / 2);
                 treeDepthSpinner.setMaxWidth(PARAM_SPIN_WIDTH);
                 treeDepthSpinner.setMaxHeight(GROUP_SPINNER_HEIGHT - DEFAULT_SPACING);
-                treeDepthSpinner.valueProperty().addListener((ov, t, t1) -> {  });
+                treeDepthSpinner.valueProperty().addListener((ov, t, t1) -> {
+                    settings.setTreeDepth(t1);
+                });
                 groupTreeDepth.getChildren().addAll(borderTreeDepth, text, treeDepthSpinner);
             }
 
@@ -141,7 +210,9 @@ public class  Game extends Application {
                 numRowsSpinner.setTranslateY(5 * DEFAULT_SPACING / 2);
                 numRowsSpinner.setMaxWidth(PARAM_SPIN_WIDTH);
                 numRowsSpinner.setMaxHeight(GROUP_SPINNER_HEIGHT - DEFAULT_SPACING);
-                numRowsSpinner.valueProperty().addListener((ov, t, t1) -> {  });
+                numRowsSpinner.valueProperty().addListener((ov, t, t1) -> {
+                    settings.setNumberOfRows(t1);
+                });
                 groupNumRows.getChildren().addAll(borderNumRows, text, numRowsSpinner);
             }
 
@@ -158,7 +229,9 @@ public class  Game extends Application {
                 numColsSpinner.setTranslateY(5 * DEFAULT_SPACING / 2);
                 numColsSpinner.setMaxWidth(PARAM_SPIN_WIDTH);
                 numColsSpinner.setMaxHeight(GROUP_SPINNER_HEIGHT - DEFAULT_SPACING);
-                numColsSpinner.valueProperty().addListener((ov, t, t1) -> {  });
+                numColsSpinner.valueProperty().addListener((ov, t, t1) -> {
+                    settings.setNumberOfCols(t1);
+                });
                 groupNumCols.getChildren().addAll(borderNumCols, text, numColsSpinner);
             }
 
@@ -172,6 +245,11 @@ public class  Game extends Application {
                 startGameBtn.setTranslateX(WINDOW_WIDTH - BTN_WIDTH - DEFAULT_SPACING);
                 startGameBtn.setTranslateY(DEFAULT_SPACING / 2);
                 startGameBtn.setOnAction((ActionEvent event) -> {
+                    //podesiti pocetno stanje
+                    fillGameBoard(settings.getNumberOfRows(), settings.getNumberOfCols());
+                    groupHeader.setDisable(true);
+                    groupInGameParams.setDisable(false);
+                    groupGameBoard.setDisable(false);
                 });
             }
 
@@ -185,13 +263,19 @@ public class  Game extends Application {
                 loadGameBtn.setTranslateX(WINDOW_WIDTH - BTN_WIDTH - DEFAULT_SPACING);
                 loadGameBtn.setTranslateY(GROUP_HEADER_HEIGHT / 2 + DEFAULT_SPACING / 2);
                 loadGameBtn.setOnAction((ActionEvent event) -> {
+                    //funkcija koja ucitava iz fajla i popunjava settings i state
+                    fillGameBoard(settings.getNumberOfRows(), settings.getNumberOfCols());
+                    groupHeader.setDisable(true);
+                    groupInGameParams.setDisable(false);
+                    groupGameBoard.setDisable(false);
                 });
             }
 
-            groupHeader.getChildren().addAll(groupHeaderBorder, playerOne, playerTwo, groupTreeDepth, groupNumRows, groupNumCols, loadGameBtn, startGameBtn);
+            groupHeader.getChildren().addAll(groupHeaderBorder, playerOne, playerTwo, groupTreeDepth,
+                    groupNumRows, groupNumCols, loadGameBtn, startGameBtn);
         }
 
-        Group groupInGameParams = new Group();
+        groupInGameParams = new Group();
         {
             groupInGameParams.setTranslateY(GROUP_HEADER_HEIGHT);
             groupInGameParams.setTranslateX(DEFAULT_SPACING / 2);
@@ -290,46 +374,58 @@ public class  Game extends Application {
                 groupNumCols.getChildren().addAll(borderNumCols, text, numColsSpinner);
             }
 
-            Button startGameBtn = new Button();
-            startGameBtn.setText("Start game");
-            startGameBtn.setMinWidth(BTN_WIDTH);
-            startGameBtn.setMaxWidth(BTN_WIDTH);
-            startGameBtn.setMinHeight(15);
-            startGameBtn.setMaxHeight(GROUP_HEADER_HEIGHT / 2 - DEFAULT_SPACING);
-            startGameBtn.setTranslateX(WINDOW_WIDTH - BTN_WIDTH - DEFAULT_SPACING);
-            startGameBtn.setTranslateY(DEFAULT_SPACING / 2);
-            startGameBtn.setOnAction((ActionEvent event) -> {     });
+            Button endGameBtn = new Button();
+            endGameBtn.setText("End game");
+            endGameBtn.setMinWidth(BTN_WIDTH);
+            endGameBtn.setMaxWidth(BTN_WIDTH);
+            endGameBtn.setMinHeight(15);
+            endGameBtn.setMaxHeight(GROUP_HEADER_HEIGHT / 2 - DEFAULT_SPACING);
+            endGameBtn.setTranslateX(WINDOW_WIDTH - BTN_WIDTH - DEFAULT_SPACING);
+            endGameBtn.setTranslateY(DEFAULT_SPACING / 2);
+            endGameBtn.setOnAction((ActionEvent event) -> {
+                groupHeader.setDisable(false);
+                groupInGameParams.setDisable(true);
+                groupGameBoard.setDisable(true);
+            });
 
-            Button loadGameBtn = new Button();
-            loadGameBtn.setText("Load game");
-            loadGameBtn.setMinWidth(BTN_WIDTH);
-            loadGameBtn.setMaxWidth(BTN_WIDTH);
-            loadGameBtn.setMinHeight(15);
-            loadGameBtn.setMaxHeight(BTN_HEIGHT);
-            loadGameBtn.setTranslateX(WINDOW_WIDTH - BTN_WIDTH - DEFAULT_SPACING);
-            loadGameBtn.setTranslateY(GROUP_HEADER_HEIGHT / 2 + DEFAULT_SPACING / 2);
-            loadGameBtn.setOnAction((ActionEvent event) -> {     });
+            Button saveGameBtn = new Button();
+            saveGameBtn.setText("Save game");
+            saveGameBtn.setMinWidth(BTN_WIDTH);
+            saveGameBtn.setMaxWidth(BTN_WIDTH);
+            saveGameBtn.setMinHeight(15);
+            saveGameBtn.setMaxHeight(BTN_HEIGHT);
+            saveGameBtn.setTranslateX(WINDOW_WIDTH - BTN_WIDTH - DEFAULT_SPACING);
+            saveGameBtn.setTranslateY(GROUP_HEADER_HEIGHT / 2 + DEFAULT_SPACING / 2);
+            saveGameBtn.setOnAction((ActionEvent event) -> {
+                //funkcija koja cuva trenutno stanje i settings u fajl
+                groupHeader.setDisable(false);
+                groupInGameParams.setDisable(true);
+                groupGameBoard.setDisable(true);
+            });
 
-            groupInGameParams.getChildren().addAll(groupHeaderBorder, playerOne, playerTwo, groupTreeDepth, groupNumRows, groupNumCols, loadGameBtn, startGameBtn);
+            groupInGameParams.getChildren().addAll(groupHeaderBorder, playerOne, playerTwo, groupTreeDepth, groupNumRows, groupNumCols, saveGameBtn, endGameBtn);
         }
 
-        Group groupGameBoard = new Group();
+        groupGameBoard = new Group();
         {
             groupGameBoard.setTranslateY(GROUP_HEADER_HEIGHT + GROUP_IN_GAME_PARAMS_HEIGHT);
             groupGameBoard.setTranslateX(DEFAULT_SPACING / 2);
 
-            Rectangle groupHeaderBorder = new Rectangle(1, 1, GROUP_GAME_BOARD_WIDTH - 2, GROUP_GAME_BOARD_HEIGHT - 2);
-            groupHeaderBorder.setFill(Color.TRANSPARENT);
-            groupHeaderBorder.setStroke(Color.BLACK);
+            Rectangle groupGameBoardBorder = new Rectangle(1, 1, GROUP_GAME_BOARD_WIDTH - 2, GROUP_GAME_BOARD_HEIGHT - 2);
+            groupGameBoardBorder.setFill(Color.TRANSPARENT);
+            groupGameBoardBorder.setStroke(Color.BLACK);
 
-            groupGameBoard.getChildren().addAll(groupHeaderBorder);
+            groupGameBoard.getChildren().addAll(groupGameBoardBorder);
         }
 
         Group root = new Group();
         root.getChildren().addAll(groupHeader, groupInGameParams, groupGameBoard);
         Scene scene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
-        settings = null;
+        settings = new Settings();
 
+        settings = null;
+        groupInGameParams.setDisable(true);
+        groupGameBoard.setDisable(true);
 
         primaryStage.setTitle("Dots And Boxes game");
         primaryStage.setScene(scene);
