@@ -33,13 +33,15 @@ public class Box {
 		return numDrawn;
 	}
 	
-	public void completeBox(){
+	public void completeBox(String player, int moveNum){
 		if (numLinesDrawn() < 3)
 			return;
 		
+		System.out.println("Iscrtan je kvadrat " + this);
+		
 		for (Line l: lines){
 			if (! l.isDrawn())
-				l.setIsDrawn(true);
+				l.drawLine(player, moveNum);
 		}
 	}
 

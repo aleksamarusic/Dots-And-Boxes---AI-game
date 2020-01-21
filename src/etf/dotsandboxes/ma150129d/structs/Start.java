@@ -4,13 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import etf.dotsandboxes.ma150129d.bots.PlayerEasy;
+import etf.dotsandboxes.ma150129d.files.FileManager;
 
 public class Start {
 	
 	private static ArrayList<Line> lines;
 	private static int m, n;
 	//private ArrayList<ArrayList<Box>> boxes;
-	public static Box[][] boxes;
+	private static Box[][] boxes;
 	
 	public static void initLinesAndBoxes(){
 		lines = new ArrayList<Line>();
@@ -68,7 +69,7 @@ public class Start {
 		}
 	}
 	
-	public static Box getBoxWithTreeLines(){
+	public static Box getBoxWithThreeLines(){
 		for(int i=0; i<m-1; i++){
 			for(int j=0; j<n-1; j++){
 				if (boxes[i][j].numLinesDrawn() == 3)
@@ -85,6 +86,18 @@ public class Start {
 
 	public static int getN() {
 		return n;
+	}
+
+	public static void setM(int m) {
+		Start.m = m;
+	}
+
+	public static void setN(int n) {
+		Start.n = n;
+	}
+
+	public static ArrayList<Line> getLines() {
+		return lines;
 	}
 
 	public static Line getLine(ArrayList<Dot> dots) {
@@ -106,6 +119,16 @@ public class Start {
 		return null;
 	}
 	
+	public static boolean isGameOver() {
+		for (Line l: lines){
+			if (!l.isDrawn())
+				return false;
+		}
+		
+		return true;
+	}
+	
+	//Just for testing
 	public static void main(String[] args){
 		m = 8;
 		n = 10;
@@ -117,10 +140,16 @@ public class Start {
 		for(int i=0; i<20; i++)
 			playerEasy.playMove(new State());
 		
-		lines.get(0).setIsDrawn(true);
-		lines.get(1).setIsDrawn(true);
-		lines.get(3).setIsDrawn(true);
+		lines.get(0).drawLine("Aleksa", 20);
+		lines.get(1).drawLine("Aleksa", 21);
+		lines.get(3).drawLine("Aleksa", 22);
 		
 		playerEasy.playMove(new State());
+		
+		//FileManager.writeGameToFile();
+		
+		FileManager.readGameFromFile();
+		
+		System.out.println("m = " + m + ", n = " + n);
 	}
 }
