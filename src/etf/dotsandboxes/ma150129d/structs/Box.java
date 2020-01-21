@@ -36,9 +36,7 @@ public class Box {
 	public void completeBox(String player, int moveNum){
 		if (numLinesDrawn() < 3)
 			return;
-		
 		System.out.println("Iscrtan je kvadrat " + this);
-		
 		for (Line l: lines){
 			if (! l.isDrawn())
 				l.drawLine(player, moveNum);

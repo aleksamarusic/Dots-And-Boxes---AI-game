@@ -1,6 +1,8 @@
 package etf.dotsandboxes.ma150129d.game;
 
+import etf.dotsandboxes.ma150129d.bots.Player;
 import etf.dotsandboxes.ma150129d.structs.Settings;
+import etf.dotsandboxes.ma150129d.structs.State;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.scene.Group;
@@ -14,7 +16,6 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.event.EventHandler;
 
-import java.io.Console;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -69,6 +70,33 @@ public class  Game extends Application {
     private List<Circle> circles = new ArrayList<>();
     private List<Rectangle> rectangles = new ArrayList<>();
     private List<Rectangle> squares = new ArrayList<>();
+    private Player[] players = new Player[2];
+    private State state;
+
+    public State getState() {
+        return state;
+    }
+
+    public void setState(State state) {
+        this.state = state;
+    }
+
+    public List<Rectangle> getRectangles() {
+        return rectangles;
+    }
+
+    public void setRectangles(List<Rectangle> rectangles) {
+        this.rectangles = rectangles;
+    }
+
+    public List<Rectangle> getSquares() {
+        return squares;
+    }
+
+    public void setSquares(List<Rectangle> squares) {
+        this.squares = squares;
+    }
+
 
     private void fillGameBoard(int m, int n) {
         int radius = 10;
@@ -125,6 +153,14 @@ public class  Game extends Application {
         groupHeader.setDisable(false);
         groupInGameParams.setDisable(true);
         groupGameBoard.setDisable(true);
+        players[0] = players[1] = null;
+        playerOne.getSelectionModel().select(1);
+        playerOne.getSelectionModel().select(1);
+        /*settings.setNumberOfRows(numRowsSpinner.getValue());
+        settings.setNumberOfCols(numColsSpinner.getValue());
+        settings.setTreeDepth(treeDepthSpinner.getValue());
+        settings.setPlayerOne(pla.get(playerOne.getValue()));
+        settings.setPlayerTwo(pla.get(playerTwo.getValue()));*/
     }
 
     @Override
@@ -176,7 +212,6 @@ public class  Game extends Application {
                     settings.setPlayerTwo(pla.get(t1));
                 });
             }
-
 
             Group groupTreeDepth = new Group();
             {
@@ -247,6 +282,7 @@ public class  Game extends Application {
                 startGameBtn.setOnAction((ActionEvent event) -> {
                     //podesiti pocetno stanje
                     fillGameBoard(settings.getNumberOfRows(), settings.getNumberOfCols());
+                    state = new State(settings.getNumberOfRows(), settings.getNumberOfCols());
                     groupHeader.setDisable(true);
                     groupInGameParams.setDisable(false);
                     groupGameBoard.setDisable(false);
@@ -306,7 +342,7 @@ public class  Game extends Application {
             playerTwo = new ComboBox();
             {
                 playerTwo.setTranslateX(DEFAULT_SPACING);
-                playerTwo.setTranslateY(GROUP_HEADER_HEIGHT / 2 + DEFAULT_SPACING / 2);
+                playerTwo.setTranslateY((GROUP_HEADER_HEIGHT / 2) + (DEFAULT_SPACING / 2));
                 playerTwo.setMinWidth(COMBOBOX_WIDTH);
                 playerTwo.setMaxWidth(COMBOBOX_WIDTH);
                 playerTwo.setMinHeight(15);
@@ -421,11 +457,8 @@ public class  Game extends Application {
         Group root = new Group();
         root.getChildren().addAll(groupHeader, groupInGameParams, groupGameBoard);
         Scene scene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
-        settings = new Settings();
+        initialize();
 
-        settings = null;
-        groupInGameParams.setDisable(true);
-        groupGameBoard.setDisable(true);
 
         primaryStage.setTitle("Dots And Boxes game");
         primaryStage.setScene(scene);

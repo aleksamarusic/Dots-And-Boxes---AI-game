@@ -99,10 +99,10 @@ public class Tree {
             {
                 Node tmp = queue.remove();
                 int a = 5;
-                for (int j = 0; j < tmp.getState().getNum(); j++)
+                for (int j = 0; j < tmp.getState().heuristicFunction(); j++)
                 {
-                    for (int k = 1; k <= tmp.getState().getNum(); k++)
-                        if (tmp.getState().getNum() == 1)
+                    for (int k = 1; k <= tmp.getState().heuristicFunction(); k++)
+                        if (tmp.getState().heuristicFunction() == 1)
                         {
                             Node newOne = new Node(tmp.getState());
                             newOne.setDepth(tmp.getDepth() + 1);

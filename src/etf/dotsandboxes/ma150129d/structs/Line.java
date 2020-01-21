@@ -14,7 +14,6 @@ public class Line {
 		dots = new ArrayList<Dot>();
 		dots.add(d1);
 		dots.add(d2);
-		
 		isDrawn = false;
 		player = "";
 		moveNum = 0;
@@ -34,7 +33,6 @@ public class Line {
 			this.moveNum = moveNum;
 			isDrawn = true;
 		}
-		
 		System.out.println("Iscrtana je linija " + this);
 	}
 	

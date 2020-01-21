@@ -6,43 +6,40 @@ import java.util.Random;
 import etf.dotsandboxes.ma150129d.structs.Box;
 import etf.dotsandboxes.ma150129d.structs.Dot;
 import etf.dotsandboxes.ma150129d.structs.Line;
-import etf.dotsandboxes.ma150129d.structs.Start;
 import etf.dotsandboxes.ma150129d.structs.State;
 
 public class PlayerEasy extends Player {
-    @Override
+	public PlayerEasy(String name) {
+		this.name = name;
+	}
+
+	@Override
     public State playMove(State state) {
-    	Box boxToComplete = Start.getBoxWithThreeLines();
-    	
-    	if (boxToComplete != null){
-    		//TODO: ispraviti kada se bude znalo kako se
-    		//dohvata ime igraca i potez!!!
-    		boxToComplete.completeBox("Aleksa", 14);
+    	Box boxToComplete = state.getBoxWithThreeLines();
+    	if (boxToComplete != null) {
+			state.setNextMoveNumber(state.getNextMoveNumber() + 1);
+    		boxToComplete.completeBox(name, state.getNextMoveNumber());
     	}
     	else{
     		Line line;
     		Random random = new Random();
-    		
-    		if (!Start.isGameOver()){ //just to prevent infinite loop
+    		if (!state.isGameOver()) { //just to prevent infinite loop
 	    		while(true) {
-	    			line = Start.getLine(generateRandomDots(random));
+	    			line = state.getLine(generateRandomDots(random, state));
 	    			if (line != null && !line.isDrawn())
 	    				break;
 	    		}
-	    		
-	    		//TODO: ispraviti kada se bude znalo kako se
-	    		//dohvata ime igraca i potez!!!
-	    		//(potez se trenutno generise random samo zbog testiranja)
-	    		line.drawLine("Aleksa", random.nextInt(20));
+				state.setNextMoveNumber(state.getNextMoveNumber() + 1);
+	    		line.drawLine(name, state.getNextMoveNumber());
     		}
     	}
     	
         return null;
     }
     
-    ArrayList<Dot> generateRandomDots(Random random){
-	    int x1 = random.nextInt(Start.getM());
-	    int y1 = random.nextInt(Start.getN());
+    private ArrayList<Dot> generateRandomDots(Random random, State state){
+	    int x1 = random.nextInt(state.getNumberOfRows());
+	    int y1 = random.nextInt(state.getNumberOfCols());
 	    int x2, y2;
 	    
 	    if (random.nextBoolean()){ //x stays the same, y changes
@@ -50,8 +47,8 @@ public class PlayerEasy extends Player {
 	    	
 	    	if (y1 == 0)
 		    	y2 = 1;
-		    else if (y1 == Start.getN() - 1)
-		    	y2 = Start.getN() - 2;
+		    else if (y1 == state.getNumberOfCols() - 1)
+		    	y2 = state.getNumberOfCols() - 2;
 		    else
 		    	y2 = random.nextBoolean() ? y1 - 1 : y1 + 1;
 	    }
@@ -60,8 +57,8 @@ public class PlayerEasy extends Player {
 	    	
 	    	if (x1 == 0)
 		    	x2 = 1;
-		    else if (x1 == Start.getM() - 1)
-		    	x2 = Start.getM() - 2;
+		    else if (x1 == state.getNumberOfRows() - 1)
+		    	x2 = state.getNumberOfRows() - 2;
 		    else
 		    	x2 = random.nextBoolean() ? x1 - 1 : x1 + 1;
 	    }

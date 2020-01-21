@@ -13,11 +13,11 @@ import java.util.List;
 
 import etf.dotsandboxes.ma150129d.structs.Dot;
 import etf.dotsandboxes.ma150129d.structs.Line;
-import etf.dotsandboxes.ma150129d.structs.Start;
+import etf.dotsandboxes.ma150129d.structs.State;
 
 public class FileManager {
 	public static void writeGameToFile(){
-		ArrayList<Line> lines = Start.getLines();
+		ArrayList<Line> lines = State.getLines();
 		ArrayList<Line> sortedLines = new ArrayList<Line>();
 		
 		for(Line l: lines){
@@ -31,7 +31,7 @@ public class FileManager {
 		
 		try (BufferedWriter writer = Files.newBufferedWriter(path, charset)) {
 			
-			String dimensions = "" + Start.getM() + " " + Start.getN();
+			String dimensions = "" + State.getNumberOfRows() + " " + State.getNumberOfCols();
 		    writer.write(dimensions, 0, dimensions.length());
 		    writer.newLine();
 		    
@@ -67,8 +67,8 @@ public class FileManager {
 		    	int n = Integer.parseInt(strings[1]);
 		    	
 		    	if (m > 0 && n > 0){
-			    	Start.setM(m);
-			    	Start.setN(n);
+			    	State.setNumberOfRows(m);
+			    	State.setNumberOfCols(n);
 		    	}
 		    	else{
 		    		return false;
@@ -90,7 +90,7 @@ public class FileManager {
 		    return false;
 		}
 		
-		ArrayList<Line> lines = Start.getLines();
+		ArrayList<Line> lines = State.getLines();
 		
 		for (Line newL: newLines){
 			for(Line l: lines){

@@ -1,7 +1,6 @@
 package etf.dotsandboxes.ma150129d.bots;
 
 import etf.dotsandboxes.ma150129d.structs.Box;
-import etf.dotsandboxes.ma150129d.structs.Start;
 import etf.dotsandboxes.ma150129d.structs.State;
 
 public class PlayerMedium extends Player {
@@ -62,12 +61,12 @@ public class PlayerMedium extends Player {
 
     @Override
     public State playMove(State state) {
-    	Box boxToComplete = Start.getBoxWithThreeLines();
+    	Box boxToComplete = state.getBoxWithThreeLines();
     	
     	if (boxToComplete != null){
     		//TODO: ispraviti kada se bude znalo kako se
     		//dohvata ime igraca i potez!!!
-    		boxToComplete.completeBox("Aleksa", 14);
+    		//boxToComplete.completeBox("Aleksa", 14);
     	}
     	else{
 	        this.tree = new Tree(state);
