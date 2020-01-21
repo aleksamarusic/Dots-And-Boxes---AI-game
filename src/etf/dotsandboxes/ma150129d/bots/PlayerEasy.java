@@ -12,26 +12,29 @@ import etf.dotsandboxes.ma150129d.structs.State;
 public class PlayerEasy extends Player {
     @Override
     public State playMove(State state) {
-    	Box boxToComplete = Start.getBoxWithTreeLines();
+    	Box boxToComplete = Start.getBoxWithThreeLines();
     	
     	if (boxToComplete != null){
-    		boxToComplete.completeBox();
-    		
-    		System.out.println("Iscrtan je kvadrat " + boxToComplete);
+    		//TODO: ispraviti kada se bude znalo kako se
+    		//dohvata ime igraca i potez!!!
+    		boxToComplete.completeBox("Aleksa", 14);
     	}
     	else{
     		Line line;
     		Random random = new Random();
     		
-    		while(true) {
-    			line = Start.getLine(generateRandomDots(random));
-    			if (line != null && !line.isDrawn())
-    				break;
+    		if (!Start.isGameOver()){ //just to prevent infinite loop
+	    		while(true) {
+	    			line = Start.getLine(generateRandomDots(random));
+	    			if (line != null && !line.isDrawn())
+	    				break;
+	    		}
+	    		
+	    		//TODO: ispraviti kada se bude znalo kako se
+	    		//dohvata ime igraca i potez!!!
+	    		//(potez se trenutno generise random samo zbog testiranja)
+	    		line.drawLine("Aleksa", random.nextInt(20));
     		}
-    		
-    		line.setIsDrawn(true);
-    		
-    		System.out.println("Iscrtana je linija " + line);
     	}
     	
         return null;

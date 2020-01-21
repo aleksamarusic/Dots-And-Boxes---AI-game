@@ -62,12 +62,12 @@ public class PlayerMedium extends Player {
 
     @Override
     public State playMove(State state) {
-    	Box boxToComplete = Start.getBoxWithTreeLines();
+    	Box boxToComplete = Start.getBoxWithThreeLines();
     	
     	if (boxToComplete != null){
-    		boxToComplete.completeBox();
-    		
-    		System.out.println("Iscrtan je kvadrat " + boxToComplete);
+    		//TODO: ispraviti kada se bude znalo kako se
+    		//dohvata ime igraca i potez!!!
+    		boxToComplete.completeBox("Aleksa", 14);
     	}
     	else{
 	        this.tree = new Tree(state);
