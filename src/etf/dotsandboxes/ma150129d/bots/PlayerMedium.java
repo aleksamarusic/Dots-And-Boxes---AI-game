@@ -1,5 +1,7 @@
 package etf.dotsandboxes.ma150129d.bots;
 
+import etf.dotsandboxes.ma150129d.structs.Box;
+import etf.dotsandboxes.ma150129d.structs.Start;
 import etf.dotsandboxes.ma150129d.structs.State;
 
 public class PlayerMedium extends Player {
@@ -60,14 +62,24 @@ public class PlayerMedium extends Player {
 
     @Override
     public State playMove(State state) {
-        this.tree = new Tree(state);
-        tree.formTree(maxDepth);
-        /*int val = AlphaBeta(tree.Root, maxDepth, 0, Int32.MinValue, Int32.MaxValue);
-        int i = 0;
-        while (i < tree.Root.Children.Count && val != tree.Root.Children[i].Value)
-            i++;
-        return i < tree.Root.Children.Count ? tree.Root.Children[i].State : null;*/
-        return tree.getRoot().getState();
+    	Box boxToComplete = Start.getBoxWithTreeLines();
+    	
+    	if (boxToComplete != null){
+    		boxToComplete.completeBox();
+    		
+    		System.out.println("Iscrtan je kvadrat " + boxToComplete);
+    	}
+    	else{
+	        this.tree = new Tree(state);
+	        tree.formTree(maxDepth);
+	        /*int val = AlphaBeta(tree.Root, maxDepth, 0, Int32.MinValue, Int32.MaxValue);
+	        int i = 0;
+	        while (i < tree.Root.Children.Count && val != tree.Root.Children[i].Value)
+	            i++;
+	        return i < tree.Root.Children.Count ? tree.Root.Children[i].State : null;*/
+    	}
+    	
+    	return tree.getRoot().getState();
     }
 
 
